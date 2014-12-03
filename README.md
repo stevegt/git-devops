@@ -3,7 +3,6 @@ git-devops
 
 > *Check in* ***all*** *the things...*
 
-
 Target Use Cases
 ----------------
 
