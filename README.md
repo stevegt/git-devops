@@ -44,7 +44,7 @@ Status and Roadmap
 Prototype in development right now, first production release by
 February 2015.
 
-I'll push to frequently github as I go along.  Pull requests are
+I'll push frequently to github as I go along.  Pull requests are
 welcome and encouraged.
 
 
