@@ -1,7 +1,8 @@
 git-devops
 ==========
 
-> *Check in* ***all*** *the things...*
+Git-devops is an automated systems administration tool which uses
+git's backend plumbing as a distributed database.
 
 Target Use Cases
 ----------------
