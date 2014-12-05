@@ -45,15 +45,12 @@ Design Goals
     - one branch per machine type
     - ordinary git repo
         - safe to clone, prune, pack, gc, fsck, merge, etc.
-        - GIT_DIR = /etc/git-devops/repo
-        - GIT_WORK_TREE = /
-- Use one repo per blob for large blob storage 
-    - large blobs are sliced, hashed, and stored as chunks in repos
-      under /var/cache/git-devops/
-    - One repo per blob, one tag per chunk
+        - GIT_DIR = /var/git-devops/repo
+    - large blobs are sliced, hashed, and stored as chunks in repo
+    - Each chunk is tagged
     - Maintain a sparse cache -- using the tags, automatically pull
       only those chunks needed for current operations on target
-      machine, then clean up afterwards
+      machine, then drop tags and gc later
 - Use gnupg for release signatures
 - Pull only -- simplifies security model and overall design
     - No ssh'ing into other machines to change them; we only ssh into
