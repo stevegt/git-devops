@@ -47,13 +47,13 @@ Design Goals
         - safe to clone, prune, pack, gc, fsck, merge, etc.
         - GIT_DIR = /etc/git-devops/repo
         - GIT_WORK_TREE = /
-- Use our own methods for large file storage 
-    - large files are sliced, hashed, and stored as chunks in
-      /var/cache/git-devops
-    - git-devops manages and transfers these chunks itself 
-    - Maintain a sparse cache -- automatically pull only those chunks
-      needed for current operations on target machine, then clean up
-      afterwards
+- Use one repo per blob for large blob storage 
+    - large blobs are sliced, hashed, and stored as chunks in repos
+      under /var/cache/git-devops/
+    - One repo per blob, one tag per chunk
+    - Maintain a sparse cache -- using the tags, automatically pull
+      only those chunks needed for current operations on target
+      machine, then clean up afterwards
 - Use gnupg for release signatures
 - Pull only -- simplifies security model and overall design
     - No ssh'ing into other machines to change them; we only ssh into
