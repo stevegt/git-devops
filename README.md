@@ -39,7 +39,7 @@ Design Goals
       graph
 - Support the ability to check in blobs which are larger than local
   free disk space
-- Use librabinpoly for slicing large files into small blobs
+- Use librabinpoly for slicing large files into small chunks
 - Use git's porcelain for merge, commit, and branch management
     - small files, journal, and large file blob index are all here
     - one branch per machine type
@@ -47,30 +47,17 @@ Design Goals
         - safe to clone, prune, pack, gc, fsck, merge, etc.
         - GIT_DIR = /etc/git-devops/repo
         - GIT_WORK_TREE = /
-- Use git's plumbing for large file storage 
-    - large files are sliced, hashed, and stored as smaller blobs in
-      a cache repo
-    - bare git repo
-        - safe to clone, prune, pack, gc, fsck, merge
-            - file fragments are blobs 
-            - blobs we want to keep locally get referenced by a tag of
-              {filename}/{offset}-{length}, e.g.
-              refs/tags/fooj/131313312-151282
-            - blobs we don't want to keep get removed using
-              update-ref followed by gc
-          XXX still fails fsck
-        - git-devops manages and transfers these blobs itself using
-          git plumbing as API
-        - GIT_DIR = /var/cache/git-devops
-        - no work tree
+- Use our own methods for large file storage 
+    - large files are sliced, hashed, and stored as chunks in
+      /var/cache/git-devops
+    - git-devops manages and transfers these chunks itself 
+    - Maintain a sparse cache -- automatically pull only those chunks
+      needed for current operations on target machine, then clean up
+      afterwards
 - Use gnupg for release signatures
-- 
-    - Pull only -- simplifies security model and overall design
-        - No ssh'ing into other machines to change them ; we only ssh
-          into other machines to fetch changes for ourselves
-- Maintain sparse repositories -- automatically pull only those blobs
-  needed for current operations on target machine, then clean up
-  afterwards
+- Pull only -- simplifies security model and overall design
+    - No ssh'ing into other machines to change them; we only ssh into
+      other machines to fetch changes for ourselves
 
 
 Status and Roadmap
