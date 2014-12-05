@@ -2,7 +2,9 @@ git-devops
 ==========
 
 Git-devops is an automated systems administration tool which uses
-git's backend plumbing as a distributed database.
+git's backend plumbing as a distributed nosql database for blob
+striped storage and transport.
+
 
 Target Use Cases
 ----------------
@@ -25,17 +27,50 @@ Target Use Cases
 Design Goals
 ------------
 
-- Keep installation simple -- 'pip install git-devops'
-- Require no central or master server
-- Use git's ssh protocol for network communications
-- Use git's porcelain for merge, commit, and branch management.
-- Use git's plumbing for external blob, tree, and journal storage 
-- Use librabinpoly for slicing large blobs into smaller ones
+- Keep code simple -- one python script and one C shared library
+  - Can be dropped into place manually, via 'pip install git-devops',
+    or by your method of choice
+  - Use python ctypes so script can be translated to any other
+    language which supports a native C shared library FFI
+- Support a CPAN-like plugin architecture, hosted by github
+    - plugins can be written in any language
+- Use ssh for all network communications
+    - Topology can be star, tree, ad-hoc mesh, or fully connected
+      graph
+- Support the ability to check in blobs which are larger than local
+  free disk space
+- Use librabinpoly for slicing large files into small blobs
+- Use git's porcelain for merge, commit, and branch management
+    - small files, journal, and large file blob index are all here
+    - one branch per machine type
+    - ordinary git repo
+        - safe to clone, prune, pack, gc, fsck, merge, etc.
+        - GIT_DIR = /etc/git-devops/repo
+        - GIT_WORK_TREE = /
+- Use git's plumbing for large file storage 
+    - large files are sliced, hashed, and stored as smaller blobs in
+      a cache repo
+    - bare git repo
+        - safe to clone, prune, pack, gc, fsck, merge
+            - file fragments are blobs 
+            - blobs we want to keep locally get referenced by a tag of
+              {filename}/{offset}-{length}, e.g.
+              refs/tags/fooj/131313312-151282
+            - blobs we don't want to keep get removed using
+              update-ref followed by gc
+          XXX still fails fsck
+        - git-devops manages and transfers these blobs itself using
+          git plumbing as API
+        - GIT_DIR = /var/cache/git-devops
+        - no work tree
 - Use gnupg for release signatures
+- 
+    - Pull only -- simplifies security model and overall design
+        - No ssh'ing into other machines to change them ; we only ssh
+          into other machines to fetch changes for ourselves
 - Maintain sparse repositories -- automatically pull only those blobs
   needed for current operations on target machine, then clean up
   afterwards
-
 
 
 Status and Roadmap
@@ -46,7 +81,6 @@ February 2015.
 
 I'll push frequently to github as I go along.  Pull requests are
 welcome and encouraged.
-
 
 
 Thinking
@@ -74,16 +108,16 @@ content control does not scale well to large blobs, and its process
 control is limited to a few hook entry points.  It does support some
 of the algorithms needed for convergence and congruence (merging and
 branching), but only for file content. There are other nits -- like
-most VCSs, git assumes it owns the entire workspace, and doesn't play
-so well when its workspace is the entire root filesystem tree. It
-doesn't manage permissions, special files, and so on. 
+most VCSs, git's frontend assumes it owns the entire workspace, and
+doesn't play so well when its workspace is the entire root filesystem
+tree. It doesn't manage permissions, special files, and so on. 
 
-At its core, however, git is a nice, lightweight, distributed,
-content-addressable nosql database, with native type support for
-blobs, lists, and trees.  The API for this backend is published,
-stable, and multilingual.  The git plumbing is vastly underutilized by
-existing DevOps tools -- this makes sense, because most of these tools
-were created prior to the mainstream acceptance of git.
+However, git's backend plumbing is a lightweight, distributed,
+content-addressable nosql database, with native type support for blobs
+and trees (nested lists, actually).  The API for this backend is
+published, stable, and multilingual.  The git plumbing is vastly
+underutilized by existing DevOps tools -- most of these tools were
+created prior to the mainstream acceptance of git.
 
 Let's build on that.
 
