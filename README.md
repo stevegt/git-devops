@@ -86,9 +86,15 @@ re-use each connection for git fetches and pushes.
 Wire Protocol
 -------------
 
-When gdo opens an ssh connection to another machine, it does so in
-multiplex master mode.  The command which the remote user runs is XXX.
+Alternative 1:
 
+    When gdo opens an ssh connection to another machine, it does so in
+    multiplex master mode.  The command which the remote user runs is
+    something provided by gdo.
+
+Alternative 2:
+
+    We develop our own wire protocol.
 
 Thinking
 --------
@@ -143,12 +149,12 @@ call it "Bob" to signify that they've actually skimmed this far.
 What is GDO an abbreviation of?
 -------------------------------
 
-Git DevOps
-Git Distributed Objects
-Global Distributed Operations
-Galactic Dollar Orchestration
-Global Dealing Operations
-General Delivery Office
-Governance Distributed Osomething
-Garage Door Opener
-[...]
+    Git DevOps
+    Git Distributed Objects
+    Global Distributed Operations
+    Galactic Dollar Orchestration
+    Global Dealing Operations
+    General Delivery Office
+    Governance Distributed Osomething
+    Garage Door Opener
+    [...]
