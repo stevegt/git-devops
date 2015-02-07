@@ -1,0 +1,87 @@
+#!/usr/bin/python
+
+import argparse
+import os
+
+parser = argparse.ArgumentParser(description='git with distributed object storage')
+parser.add_argument('--git_dir', dest='git_dir', 
+                   default='/var/gdo/repo',
+                   help='repository location')
+
+# parser.add_argument('subcmd', nargs='+', help='gdo subcommand')
+# parser.add_argument('subargs', nargs='*')
+
+args = parser.parse_args()
+os.environ['GIT_DIR'] = args.git_dir
+
+subparsers = parser.add_subparsers(help='sub-command help')
+
+parser_init = subparsers.add_parser('init', help='init help')
+parser_init.add_argument('init', default='.', help='bar help')
+
+parser_init = subparsers.add_parser('inithost', help='init help')
+parser_init.add_argument('inithost', type=int, help='bar help')
+
+'''
+XXX
+subcmd=$1
+shift
+
+domain=`grep ^domain /etc/resolv.conf | awk '{print $2}'`
+gitbranch=d3.t7a.org
+
+cd /
+
+case $subcmd in
+    
+    diff)
+        git diff
+        ;;
+
+    init)
+        isconf_branch=$1
+        # tmp=$(mktemp -d)
+        # cd $tmp
+        git init .
+        # git config --global push.default simple
+        git config status.showuntrackedfiles no
+        git pull git@gold.$gitbranch:$gitbranch $gitbranch 
+        git branch $gitbranch
+        git checkout $gitbranch
+        git remote add origin git@gold.$gitbranch:$gitbranch
+        git fetch
+        # git branch --set-upstream-to=origin/$gitbranch $gitbranch
+        git branch --set-upstream d3.t7a.org origin/d3.t7a.org
+        git pull 
+        git status
+        isconf restart
+        isconf fork $isconf_branch
+        ;;
+
+    XXXmerge)
+        tmp=/tmp/$$
+        git clone / $tmp
+        cd $tmp
+        git pull git@gold:$gitbranch
+        for f in $(find . -name .git -prune -o -print)
+        do
+            if test -e /$f && ! cmp $f /$f
+            then
+                vimdiff $f /$f
+            fi
+        done
+        ;;
+
+    st)
+        git status
+        ;;
+
+    up)
+        git pull
+	/etc/jsconf/run-triggers
+        isconf up
+        ;;
+
+        
+esac
+'''

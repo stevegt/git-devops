@@ -1,9 +1,9 @@
 git-devops
 ==========
 
-Git-devops is an automated systems administration tool which uses
-git's backend plumbing as a distributed nosql database for blob
-striped storage and transport.
+Git-devops (gdo) is an automated systems administration tool which
+uses git's backend plumbing as a distributed nosql database,
+replicating chunks of large blobs across multiple machines.
 
 
 Target Use Cases
@@ -13,8 +13,8 @@ Target Use Cases
     - Provide an underlying DVCS for managing binaries, large blobs,
       and configuration files for existing DevOps tools, supporting
       diverse algorithms and philosophies
-    - Provide a native management algorithm for host
-      management, supporting the two major models in use today:
+    - Provide a native management algorithm for host management,
+      supporting the two major models in use today:
         - Convergence -- take over hosts in unknown state, bring them
           towards a known state over time
         - Congruence -- start with hosts in known state, keep them
@@ -24,8 +24,21 @@ Target Use Cases
 - Media storage, both online and offline
 
 
+Status and Roadmap
+------------------
+
+Prototype in development right now, first production release by
+Summer 2015.
+
+I'll push frequently to github as I go along.  Pull requests are
+welcome and encouraged.
+
+
 Design Goals
 ------------
+
+Conceptually, git-devops is new porcelain on top of the git plumbing.
+Normally it is called as 'gdo' rather than 'git devops'.  
 
 - Keep code simple -- one python script and one C shared library
   - Can be dropped into place manually, via 'pip install git-devops',
@@ -45,7 +58,6 @@ Design Goals
     - one branch per machine type
     - ordinary git repo
         - safe to clone, prune, pack, gc, fsck, merge, etc.
-        - GIT_DIR = /var/git-devops/repo
     - large blobs are sliced, hashed, and stored as chunks in repo
     - Each chunk is tagged
     - Maintain a sparse cache -- using the tags, automatically pull
@@ -57,14 +69,25 @@ Design Goals
       other machines to fetch changes for ourselves
 
 
-Status and Roadmap
-------------------
+Architecture
+------------
 
-Prototype in development right now, first production release by
-February 2015.
+Gdo manages one repository on each machine, with GIT_DIR set to
+/var/git-devops/repo.  No two machines hold the exact same repository
+content; they each use the repo as a sparse cache.  It's possible that
+no machine holds the entire set of objects.  The entire set of objects
+may be larger than the largest disk on any one machine.  
 
-I'll push frequently to github as I go along.  Pull requests are
-welcome and encouraged.
+Gdo creates an ssh connection to one or more other machines, and runs
+gdo remotely there.  Gdado takes advantage of openssh multiplexing to
+re-use each connection for git fetches and pushes.
+
+
+Wire Protocol
+-------------
+
+When gdo opens an ssh connection to another machine, it does so in
+multiplex master mode.  The command which the remote user runs is XXX.
 
 
 Thinking
@@ -83,7 +106,8 @@ Any decent host management tool can be thought of as a special-case
 implementation of a form of version control in which file content and
 process execution are both first-class primitives.  The aim of these
 primitives is ultimately to control the bits on disk, either by
-writing directly over them, or running another process that does so.
+writing directly over them, or by running another process that does
+so.
 
 Git is a pretty good distributed version control system, but its DVCS
 frontend is optimized for application development, and lacks many of
@@ -93,16 +117,38 @@ control is limited to a few hook entry points.  It does support some
 of the algorithms needed for convergence and congruence (merging and
 branching), but only for file content. There are other nits -- like
 most VCSs, git's frontend assumes it owns the entire workspace, and
-doesn't play so well when its workspace is the entire root filesystem
-tree. It doesn't manage permissions, special files, and so on. 
+doesn't play so well when its workspace is a subset of the entire root
+filesystem tree. It doesn't manage permissions, special files, and so
+on. 
 
 However, git's backend plumbing is a lightweight, distributed,
 content-addressable nosql database, with native type support for blobs
-and trees (nested lists, actually).  The API for this backend is
-published, stable, and multilingual.  The git plumbing is vastly
-underutilized by existing DevOps tools -- most of these tools were
-created prior to the mainstream acceptance of git.
+and trees.  The API for this backend is published, stable, and
+multilingual.  The git plumbing is vastly underutilized by existing
+DevOps tools -- most of these tools were created prior to the
+mainstream acceptance of git.
 
 Let's build on that.
 
 
+How is "gdo" pronounced?
+------------------------
+
+I use both "gee dee oh" and "gee doo" in conversation; both are
+equally valid.  Interview candidates and coworkers should not be
+derided for using either of these pronuciations.  Project managers can
+call it "Bob" to signify that they've actually skimmed this far.
+
+
+What is GDO an abbreviation of?
+-------------------------------
+
+Git DevOps
+Git Distributed Objects
+Global Distributed Operations
+Galactic Dollar Orchestration
+Global Dealing Operations
+General Delivery Office
+Governance Distributed Osomething
+Garage Door Opener
+[...]
