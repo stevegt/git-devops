@@ -27,8 +27,11 @@ Target Use Cases
 Status and Roadmap
 ------------------
 
-Prototype in development right now, first production release by
+Prototype in development right now, first production release 
 Summer 2015.
+
+At the moment (Spring 2015), most of the work is going on in
+https://github.com/stevegt/librabinpoly.
 
 I'll push frequently to github as I go along.  Pull requests are
 welcome and encouraged.
