@@ -75,6 +75,24 @@ Normally it is called as 'gdo' rather than 'git devops'.
 Architecture
 ------------
 
+- Bitcoin-like block chain
+- but forks are allowed
+- and payload can be arbitrary data, such as:
+    - transactions
+    - file diffs
+    - blobs
+    - chunks of blobs
+    - parameter/results lambda sets
+- transactions can include e.g. bond-like purchases in support of a
+  given fork
+- multi-currency
+    - supports personal currencies -- everyone is their own central bank
+    - works like reputation points -- exchange rate reflects relative
+      integrity of counterparties
+
+
+XXX
+
 Gdo manages one repository on each machine, with GIT_DIR set to
 /var/git-devops/repo.  No two machines hold the exact same repository
 content; they each use the repo as a sparse cache.  It's possible that
